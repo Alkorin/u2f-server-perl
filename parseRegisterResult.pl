@@ -10,7 +10,7 @@ use File::Temp;
 use Getopt::Long;
 use IPC::Open2;
 use JSON;
-use MIME::Base64 qw{ encode_base64 decode_base64url };
+use MIME::Base64 qw{ encode_base64url decode_base64url };
 
 # Parse options
 my $appId;
@@ -41,8 +41,8 @@ if($registrationResult)
 {
 	# Parse done, print reults
 	print "Registration sucess:\n";
-	print "PubKey: " . encode_base64($registrationResult->{'userPublicKey'}, '') . "\n";
-	print "KeyHandle: " . encode_base64($registrationResult->{'keyHandle'}, '') . "\n";
+	print "PubKey: " . encode_base64url($registrationResult->{'userPublicKey'}, '') . "\n";
+	print "KeyHandle: " . encode_base64url($registrationResult->{'keyHandle'}, '') . "\n";
 }
 else
 {
