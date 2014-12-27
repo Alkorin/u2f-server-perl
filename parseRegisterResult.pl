@@ -86,7 +86,7 @@ sub parseRegistrationData
 	# Verify signature upon DER Certificate
 	my $dataSignature = "\x00" . sha256($appId) . sha256($clientData) . $keyHandle . $userPublicKey;
 	my $ret = verifySignature({ key => $Certificate->pubkey, data => $dataSignature, signature => $signature });
-	if (not $ret)
+	if (!$ret)
 	{
 		die('Invalid signature');
 	}
