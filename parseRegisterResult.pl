@@ -35,7 +35,7 @@ my $clientDataJSON   = decode_base64url($data->{'clientData'});
 my $clientData       = decode_json($clientDataJSON);
 
 # Parse registrationData
-my $registrationResult = eval{ parseRegistrationData({ registrationData => $registrationData, appId => $appId }) };
+my $registrationResult = eval{ parseRegistrationData({ registrationData => $registrationData, clientData => $clientDataJSON, appId => $appId }) };
 
 if($registrationResult)
 {
@@ -56,6 +56,7 @@ sub parseRegistrationData
 {
 	my $params = shift;
 	my $registrationString = $params->{'registrationData'};
+	my $clientData = $params->{'clientData'};
 	my $appId = $params->{'appId'};
 
 	# A reserved byte [1 byte], which for legacy reasons has the value 0x05.
@@ -83,7 +84,7 @@ sub parseRegistrationData
 	my $signature = $registrationString;
 
 	# Verify signature upon DER Certificate
-	my $dataSignature = "\x00" . sha256($appId) . sha256($clientDataJSON) . $keyHandle . $userPublicKey;
+	my $dataSignature = "\x00" . sha256($appId) . sha256($clientData) . $keyHandle . $userPublicKey;
 	my $ret = verifySignature({ key => $Certificate->pubkey, data => $dataSignature, signature => $signature });
 	if (not $ret)
 	{
