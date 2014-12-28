@@ -12,8 +12,8 @@ my $appId;
 GetOptions("appId|a=s" => \$appId);
 if(!$appId)
 {
-	print STDERR "--appId ('-a') option required\n";
-	exit -1;
+    print STDERR "--appId ('-a') option required\n";
+    exit -1;
 }
 
 # Create challenge
@@ -23,7 +23,7 @@ close FH;
 
 # Output result
 print encode_json({
-	challenge => encode_base64url($challenge),
-	version   => "U2F_V2",
-	appId     => $appId
+    challenge => encode_base64url($challenge),
+    version   => "U2F_V2",
+    appId     => $appId
 });
