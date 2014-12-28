@@ -10,7 +10,7 @@ use File::Temp;
 use Getopt::Long;
 use IPC::Open2;
 use JSON;
-use MIME::Base64 qw{ encode_base64url decode_base64url };
+use MIME::Base64 qw{ encode_base64url decode_base64url encode_base64 };
 
 # Parse options
 my $appId;
@@ -41,8 +41,8 @@ if($registrationResult)
 {
     # Parse done, print reults
     print "Registration sucess:\n";
-    print "PubKey: " . encode_base64url($registrationResult->{'userPublicKey'}, '') . "\n";
     print "KeyHandle: " . encode_base64url($registrationResult->{'keyHandle'}, '') . "\n";
+    print "PublicKey:\n" . getPemFromPublicKey($registrationResult->{'userPublicKey'});
 }
 else
 {
@@ -158,4 +158,30 @@ sub getDERLength
     {
         die('Invalid DER length');
     }
+}
+
+sub getPemFromPublicKey
+{
+    my $key = shift;
+
+    if(length($key) != 65)
+    {
+        die('Invalid key length');
+    }
+
+    my @derHeader = (
+        "3059",                         # Sequence 89 bytes
+            "3013",                     # Sequence 19 bytes
+                "0607",                 # Object Identifier 7 bytes
+                    "2a8648ce3d0201",   # 1.2.840.10045.2.1 (ecPublicKey)
+                "0608",                 # Object Identifier 8 bytes
+                    "2a8648ce3d030107", # 1.2.840.10045.3.1.7 (P-256)
+            "034200",                   # Bit String 520 bytes
+    );
+
+    my $der = pack("H*", join('', @derHeader)) . $key;
+
+    my $pem = "-----BEGIN PUBLIC KEY-----\n" . encode_base64($der) . "-----END PUBLIC KEY-----\n";
+
+    return $pem;
 }
